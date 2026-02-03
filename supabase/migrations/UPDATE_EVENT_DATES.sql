@@ -1,0 +1,30 @@
+-- Update event dates based on TODAY (February 2, 2026)
+-- Copy and paste this ENTIRE script into Supabase SQL Editor and click RUN
+
+-- Step 1: Update the event dates
+UPDATE events 
+SET 
+    registration_deadline = '2026-02-02 23:59:59+00',  -- 8 days from now
+    draw_date = '2026-02-02 00:00:00+00',              -- February 11, 2026
+    event_date = '2026-02-02 00:00:00+00',             -- Valentine's Day 2026
+    status = 'REGISTRATION_OPEN'
+WHERE id = 'valentine-2026';
+
+-- Step 2: Verify the update worked
+SELECT 
+    id, 
+    name, 
+    registration_deadline, 
+    draw_date, 
+    event_date, 
+    status,
+    NOW() as current_time,
+    CASE 
+        WHEN NOW() < registration_deadline THEN 'REGISTRATION OPEN ✅'
+        ELSE 'REGISTRATION CLOSED ❌'
+    END as registration_status,
+    EXTRACT(DAY FROM (registration_deadline - NOW())) || ' days until deadline' as time_remaining
+FROM events 
+WHERE id = 'valentine-2026';
+
+-- If you see "REGISTRATION OPEN ✅" in the results, you're good to go!

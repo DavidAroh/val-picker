@@ -1,0 +1,8 @@
+{
+    "crons": [
+        {
+            "path": "/api/cron/send-draw-emails",
+            "schedule": "0 0 8 14 2 *"
+        }
+    ]
+}
