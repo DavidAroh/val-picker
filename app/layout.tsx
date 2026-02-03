@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { UserProvider } from "@/contexts/UserContext";
 import { Toaster } from "react-hot-toast";
+import { BackgroundDecorations } from "@/components/shared/BackgroundDecorations";
 
 export const metadata: Metadata = {
   title: "Secret Valentine Exchange 2026",
@@ -16,6 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
+        <BackgroundDecorations />
         <UserProvider>
           {children}
           <Toaster
