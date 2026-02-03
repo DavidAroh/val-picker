@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { supabaseAdmin } from "@/lib/supabase/server";
 import { sendDrawDayEmail } from "@/lib/email/notifications";
-import { apiSuccess, apiError, ErrorCode } from "@/lib/errors";
+import { createSuccessResponse, createErrorResponse } from "@/lib/errors";
 
 /**
  * Cron job endpoint to send draw day email notifications
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
         const authHeader = request.headers.get("authorization");
         if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
             return NextResponse.json(
-                apiError(ErrorCode.UNAUTHORIZED, "Unauthorized"),
+                createErrorResponse('UNAUTHORIZED'),
                 { status: 401 }
             );
         }
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
 
         if (!users || users.length === 0) {
             return NextResponse.json(
-                apiSuccess({ message: "No users to notify", count: 0 })
+                createSuccessResponse({ message: "No users to notify", count: 0 })
             );
         }
 
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
         });
 
         return NextResponse.json(
-            apiSuccess({
+            createSuccessResponse({
                 message: "Draw day emails sent",
                 total: users.length,
                 success: successCount,
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
     } catch (error) {
         console.error("Error sending draw day emails:", error);
         return NextResponse.json(
-            apiError(ErrorCode.INTERNAL_ERROR, "Failed to send emails"),
+            createErrorResponse('SERVER_ERROR'),
             { status: 500 }
         );
     }
