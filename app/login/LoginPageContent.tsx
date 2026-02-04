@@ -1,27 +1,23 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Navbar } from '@/components/shared/Navbar';
-import { Heart, Mail, Lock, User, ArrowRight, Gift } from 'lucide-react';
+import { Heart, Mail, Lock, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { useUser } from '@/contexts/UserContext';
 import toast from 'react-hot-toast';
 
-export default function SignupPageContent() {
+export default function LoginPageContent() {
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const { register } = useUser();
-    const inviteCode = searchParams.get('invite');
+    const { login } = useUser();
 
     const [formData, setFormData] = useState({
-        name: '',
         email: '',
         password: '',
-        confirmPassword: '',
     });
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
@@ -42,10 +38,6 @@ export default function SignupPageContent() {
     const validateForm = () => {
         const newErrors: Record<string, string> = {};
 
-        if (!formData.name.trim()) {
-            newErrors.name = 'Name is required';
-        }
-
         if (!formData.email.trim()) {
             newErrors.email = 'Email is required';
         } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
@@ -54,12 +46,6 @@ export default function SignupPageContent() {
 
         if (!formData.password) {
             newErrors.password = 'Password is required';
-        } else if (formData.password.length < 6) {
-            newErrors.password = 'Password must be at least 6 characters';
-        }
-
-        if (formData.password !== formData.confirmPassword) {
-            newErrors.confirmPassword = 'Passwords do not match';
         }
 
         setErrors(newErrors);
@@ -74,17 +60,11 @@ export default function SignupPageContent() {
         setLoading(true);
 
         try {
-            await register(
-                formData.email,
-                formData.password,
-                formData.name,
-                inviteCode || undefined
-            );
-
-            toast.success('Account created successfully!');
-            router.push('/profile-setup');
+            await login(formData.email, formData.password);
+            toast.success('Welcome back!');
+            router.push('/home');
         } catch (error: any) {
-            toast.error(error.message || 'Failed to create account');
+            toast.error(error.message || 'Failed to log in');
         } finally {
             setLoading(false);
         }
@@ -106,37 +86,14 @@ export default function SignupPageContent() {
                             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
                                 <Heart className="w-8 h-8 text-primary" />
                             </div>
-                            <h1 className="text-3xl font-bold mb-2">Create Account</h1>
+                            <h1 className="text-3xl font-bold mb-2">Welcome Back</h1>
                             <p className="text-muted-foreground">
-                                Join the Secret Valentine Exchange 2026
+                                Log in to your Valentine Exchange account
                             </p>
                         </div>
 
                         {/* Form */}
                         <form onSubmit={handleSubmit} className="space-y-4">
-                            {/* Name Field */}
-                            <div>
-                                <label className="block text-sm font-medium mb-2">
-                                    Full Name
-                                </label>
-                                <div className="relative">
-                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        value={formData.name}
-                                        onChange={handleChange}
-                                        className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring ${errors.name ? 'border-destructive' : 'border-input'
-                                            }`}
-                                        placeholder="Enter your name"
-                                        disabled={loading}
-                                    />
-                                </div>
-                                {errors.name && (
-                                    <p className="text-sm text-destructive mt-1">{errors.name}</p>
-                                )}
-                            </div>
-
                             {/* Email Field */}
                             <div>
                                 <label className="block text-sm font-medium mb-2">
@@ -153,6 +110,7 @@ export default function SignupPageContent() {
                                             }`}
                                         placeholder="you@example.com"
                                         disabled={loading}
+                                        autoComplete="email"
                                     />
                                 </div>
                                 {errors.email && (
@@ -174,51 +132,15 @@ export default function SignupPageContent() {
                                         onChange={handleChange}
                                         className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring ${errors.password ? 'border-destructive' : 'border-input'
                                             }`}
-                                        placeholder="At least 6 characters"
+                                        placeholder="Enter your password"
                                         disabled={loading}
+                                        autoComplete="current-password"
                                     />
                                 </div>
                                 {errors.password && (
                                     <p className="text-sm text-destructive mt-1">{errors.password}</p>
                                 )}
                             </div>
-
-                            {/* Confirm Password Field */}
-                            <div>
-                                <label className="block text-sm font-medium mb-2">
-                                    Confirm Password
-                                </label>
-                                <div className="relative">
-                                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                                    <input
-                                        type="password"
-                                        name="confirmPassword"
-                                        value={formData.confirmPassword}
-                                        onChange={handleChange}
-                                        className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring ${errors.confirmPassword ? 'border-destructive' : 'border-input'
-                                            }`}
-                                        placeholder="Re-enter password"
-                                        disabled={loading}
-                                    />
-                                </div>
-                                {errors.confirmPassword && (
-                                    <p className="text-sm text-destructive mt-1">
-                                        {errors.confirmPassword}
-                                    </p>
-                                )}
-                            </div>
-
-                            {/* Invite Code Display */}
-                            {inviteCode && (
-                                <div className="bg-primary/10 border border-primary/20 rounded-lg p-3">
-                                    <div className="flex items-center gap-2 text-sm">
-                                        <Gift className="w-4 h-4 text-primary" />
-                                        <span className="text-primary font-medium">
-                                            Invite code applied
-                                        </span>
-                                    </div>
-                                </div>
-                            )}
 
                             {/* Submit Button */}
                             <Button
@@ -230,29 +152,23 @@ export default function SignupPageContent() {
                                 {loading ? (
                                     <span className="flex items-center gap-2">
                                         <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
-                                        Creating Account...
+                                        Logging in...
                                     </span>
                                 ) : (
                                     <span className="flex items-center gap-2">
-                                        Create Account
+                                        Log In
                                         <ArrowRight className="w-5 h-5" />
                                     </span>
                                 )}
                             </Button>
                         </form>
 
-                        {/* Footer Note */}
-                        <p className="text-xs text-muted-foreground text-center mt-6">
-                            By signing up, you agree to participate in the Secret Valentine
-                            Exchange
-                        </p>
-
-                        {/* Login Link */}
+                        {/* Sign Up Link */}
                         <div className="text-center mt-6">
                             <p className="text-sm text-muted-foreground">
-                                Already have an account?{' '}
-                                <Link href="/login" className="text-primary font-semibold hover:underline">
-                                    Log in
+                                Don't have an account?{' '}
+                                <Link href="/signup" className="text-primary font-semibold hover:underline">
+                                    Sign up
                                 </Link>
                             </p>
                         </div>
