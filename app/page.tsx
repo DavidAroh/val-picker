@@ -1,27 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Calendar, Sparkles, UserPlus, Heart } from "lucide-react";
+import { ArrowRight, Calendar, Sparkles, UserPlus } from "lucide-react";
 import { Navbar } from "@/components/shared/Navbar";
 import { Footer } from "@/components/shared/Footer";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { CountdownTimer } from "@/components/shared/CountdownTimer";
-import { useState } from "react";
 import Link from "next/link";
 
 export default function LandingPage() {
-
-
-  const [isCountdownComplete, setIsCountdownComplete] = useState(false);
-
-  // Target date for picking: Set to 10 seconds from now
-  const [targetDate] = useState(() => {
-    const d = new Date();
-    d.setSeconds(d.getSeconds() + 10);
-    return d;
-  });
-
   return (
     <div className="min-h-screen flex flex-col bg-transparent selection:bg-primary/10 selection:text-primary overflow-x-hidden">
       <Navbar />
@@ -59,42 +46,6 @@ export default function LandingPage() {
           >
             Join the exchange today! We'll shuffle names on Valentine's Day for a romantic surprise.
           </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-            className="w-full max-w-md bg-secondary/30 p-8 rounded-[2.5rem] border border-secondary border-dashed"
-          >
-            {!isCountdownComplete ? (
-              <>
-                <p className="text-xs font-bold text-destructive uppercase tracking-[0.2em] mb-6">The Picking Day Begins In</p>
-                <CountdownTimer
-                  targetDate={targetDate}
-                  onComplete={() => setIsCountdownComplete(true)}
-                />
-              </>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                <p className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-6">It's Time!</p>
-                <Link href="/live-picker">
-                  <Button
-                    size="lg"
-                    fullWidth
-                    className="h-16 text-lg font-bold rounded-full shadow-xl shadow-primary/20 hover:shadow-primary/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
-                  >
-                    <Heart className="mr-2 w-5 h-5 fill-current" />
-                    Pick Your Val
-                    <Sparkles className="ml-2 w-5 h-5" />
-                  </Button>
-                </Link>
-              </motion.div>
-            )}
-          </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
