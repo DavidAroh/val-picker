@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
         const { data: users, error: usersError } = await supabaseAdmin
             .from("users")
             .select("id, email, name")
-            .eq("profile_complete", true);
+            .eq("profile_complete", true) as { data: any[]; error: any };
 
         if (usersError) throw usersError;
 
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
                 success: successCount,
                 failed: failureCount,
             },
-        });
+        } as any);
 
         return NextResponse.json(
             createSuccessResponse({

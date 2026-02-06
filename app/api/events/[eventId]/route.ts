@@ -14,7 +14,7 @@ export async function GET(
             .from('events')
             .select('*')
             .eq('id', eventId)
-            .single();
+            .single() as { data: any; error: any };
 
         if (eventError) throw eventError;
 

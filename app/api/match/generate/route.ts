@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
             .from('events')
             .select('*')
             .eq('id', eventId)
-            .single();
+            .single() as { data: any; error: any };
 
         if (eventError) throw eventError;
 
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
         const { data: users, error: usersError } = await supabaseAdmin
             .from('users')
             .select('id, name, email, avatar_url')
-            .eq('profile_complete', true);
+            .eq('profile_complete', true) as { data: any[]; error: any };
 
         if (usersError) throw usersError;
 
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
 
         const { error: matchError } = await supabaseAdmin
             .from('matches')
-            .insert(matchRecords);
+            .insert(matchRecords as any);
 
         if (matchError) throw matchError;
 
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
                 status: 'DRAW_LIVE',
                 matches_generated_at: new Date().toISOString(),
                 participant_count: users.length,
-            })
+            } as any)
             .eq('id', eventId);
 
         // Create notifications for all users
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
             action_url: '/live-picker',
         }));
 
-        await supabaseAdmin.from('notifications').insert(notifications);
+        await supabaseAdmin.from('notifications').insert(notifications as any);
 
         // Log activity
         await supabaseAdmin.from('activity_logs').insert({
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
             action: 'MATCHES_GENERATED',
             event_id: eventId,
             metadata: { participant_count: users.length },
-        });
+        } as any);
 
         return NextResponse.json(
             createSuccessResponse({

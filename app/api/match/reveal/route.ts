@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
             .from('events')
             .select('status')
             .eq('id', eventId)
-            .single();
+            .single() as { data: any; error: any };
 
         if (!event || event.status !== 'DRAW_LIVE') {
             return NextResponse.json(
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
             .select('revealed_at')
             .eq('giver_id', user.id)
             .eq('event_id', eventId)
-            .single();
+            .single() as { data: any; error: any };
 
         if (existingMatch?.revealed_at) {
             return NextResponse.json(
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
       `)
             .eq('giver_id', user.id)
             .eq('event_id', eventId)
-            .single();
+            .single() as { data: any; error: any };
 
         if (matchError || !match) {
             return NextResponse.json(
@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
         // Mark as revealed
         await supabaseAdmin
             .from('matches')
-            .update({ revealed_at: new Date().toISOString() })
+            .update({ revealed_at: new Date().toISOString() } as any)
             .eq('id', match.id);
 
         // Create or get chat thread
@@ -100,14 +100,14 @@ export async function POST(request: NextRequest) {
             .from('chat_threads')
             .select('id')
             .eq('match_id', match.id)
-            .single();
+            .single() as { data: any; error: any };
 
         if (!chatThread) {
             const { data: newThread } = await supabaseAdmin
                 .from('chat_threads')
-                .insert({ match_id: match.id })
+                .insert({ match_id: match.id } as any)
                 .select()
-                .single();
+                .single() as { data: any; error: any };
             chatThread = newThread;
         }
 
@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
             user_id: user.id,
             action: 'MATCH_REVEALED',
             event_id: eventId,
-        });
+        } as any);
 
         return NextResponse.json(
             createSuccessResponse({

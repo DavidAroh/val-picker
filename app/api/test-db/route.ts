@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
             .from('events')
             .select('*')
             .eq('id', 'valentine-2026')
-            .single();
+            .single() as { data: any; error: any };
 
         if (eventError || !event) {
             console.error('❌ Event not found:', eventError);

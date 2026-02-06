@@ -59,7 +59,12 @@ export default function AdminPage() {
           receiver:users!matches_receiver_id_fkey (name, email)
         `)
                 .eq("event_id", "valentine-2026");
-            setMatches(matchData || []);
+            const formattedMatches = (matchData || []).map((m: any) => ({
+                ...m,
+                giver: Array.isArray(m.giver) ? m.giver[0] : m.giver,
+                receiver: Array.isArray(m.receiver) ? m.receiver[0] : m.receiver,
+            }));
+            setMatches(formattedMatches);
         } catch (error) {
             console.error("Error fetching data:", error);
         } finally {

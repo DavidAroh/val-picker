@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
                 inviter_id: user.id,
                 invite_code: code,
                 expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
-            })
+            } as any)
             .select()
             .single();
 
