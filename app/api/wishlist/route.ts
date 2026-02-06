@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
                 link,
                 icon,
                 display_order: count || 0,
-            })
+            } as any)
             .select()
             .single();
 

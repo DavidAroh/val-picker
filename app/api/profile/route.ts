@@ -95,7 +95,7 @@ export async function PUT(request: NextRequest) {
                 hobbies,
                 avatar_url,
                 profile_complete: true,
-            })
+            } as any)
             .eq('id', user.id)
             .select()
             .single();
@@ -107,7 +107,7 @@ export async function PUT(request: NextRequest) {
             user_id: user.id,
             action: 'PROFILE_UPDATED',
             event_id: 'valentine-2026',
-        });
+        } as any);
 
         return NextResponse.json(createSuccessResponse(profile));
     } catch (error) {

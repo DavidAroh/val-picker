@@ -2,6 +2,18 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/server';
 import { createErrorResponse, createSuccessResponse } from '@/lib/errors';
 
+// Type definition for User
+interface User {
+    id: string;
+    email: string;
+    name: string | null;
+    avatar_url: string | null;
+    bio: string | null;
+    work: string | null;
+    hobbies: string | null;
+    profile_complete: boolean;
+}
+
 export async function POST(request: NextRequest) {
     try {
         const { email, password } = await request.json();
@@ -32,11 +44,12 @@ export async function POST(request: NextRequest) {
             .from('users')
             .select('*')
             .eq('id', authData.user.id)
-            .single();
+            .single() as { data: User | null; error: any };
 
         // Update last login
         await supabaseAdmin
             .from('users')
+            // @ts-ignore - Supabase type inference issue
             .update({ last_login: new Date().toISOString() })
             .eq('id', authData.user.id);
 

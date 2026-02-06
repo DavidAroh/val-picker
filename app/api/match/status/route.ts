@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
             .select('id, assigned_at, revealed_at')
             .eq('giver_id', user.id)
             .eq('event_id', eventId)
-            .single();
+            .single() as { data: any; error: any };
 
         // Get total reveal count for social proof
         const { count } = await supabaseAdmin

@@ -67,6 +67,8 @@ export interface Database {
           matches_generated_at: string | null;
           created_at: string;
         };
+        Insert: Omit<Database['public']['Tables']['events']['Row'], 'created_at'>;
+        Update: Partial<Database['public']['Tables']['events']['Insert']>;
       };
       matches: {
         Row: {
@@ -78,6 +80,8 @@ export interface Database {
           revealed_at: string | null;
           created_at: string;
         };
+        Insert: Omit<Database['public']['Tables']['matches']['Row'], 'id' | 'created_at'>;
+        Update: Partial<Database['public']['Tables']['matches']['Insert']>;
       };
       wishlist_items: {
         Row: {
@@ -93,6 +97,16 @@ export interface Database {
         Insert: Omit<Database['public']['Tables']['wishlist_items']['Row'], 'id' | 'created_at'>;
         Update: Partial<Database['public']['Tables']['wishlist_items']['Insert']>;
       };
+      chat_threads: {
+        Row: {
+          id: string;
+          match_id: string;
+          created_at: string;
+          last_message_at: string | null;
+        };
+        Insert: Omit<Database['public']['Tables']['chat_threads']['Row'], 'id' | 'created_at'>;
+        Update: Partial<Database['public']['Tables']['chat_threads']['Insert']>;
+      };
       messages: {
         Row: {
           id: string;
@@ -104,6 +118,7 @@ export interface Database {
           read_at: string | null;
         };
         Insert: Omit<Database['public']['Tables']['messages']['Row'], 'id' | 'sent_at'>;
+        Update: Partial<Database['public']['Tables']['messages']['Insert']>;
       };
       notifications: {
         Row: {
