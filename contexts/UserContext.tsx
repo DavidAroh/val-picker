@@ -109,13 +109,15 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     // Initialize auth state
     useEffect(() => {
         // Get initial session
-        supabase.auth.getSession().then(({ data: { session } }) => {
+        const initSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
             setSupabaseUser(session?.user ?? null);
             if (session?.user) {
-                fetchUserProfile(session.user.id);
+                await fetchUserProfile(session.user.id);
             }
             setIsLoading(false);
-        });
+        };
+        initSession();
 
         // Listen for auth changes
         const {
